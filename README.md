@@ -1,3 +1,8 @@
+# Create postgres user and database 
+psql -U postgres
+CREATE USER <your_postgres_user> WITH PASSWORD '<your_postgres_password>';
+CREATE DATABASE <your_postgres_db> OWNER <your_postgres_user>;
+
 # Start backend on local PC
 python -m uvicorn app.main:app --reload --port 8000
 

@@ -82,6 +82,31 @@ def home():
         "api_docs": "/docs",
     }
 
+@app.get("/health")
+def health(db: Session = Depends(get_db)):
+    try:
+        db.execute(text("SELECT 1"))
+
+        return {
+            "status": "healthy",
+            "database": "connected",
+            "department_model_loaded": hasattr(
+                app.state, "department_model"
+            ),
+            "priority_model_loaded": hasattr(
+                app.state, "priority_model"
+            ),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+
+    except SQLAlchemyError:
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "status": "unhealthy",
+                "database": "unavailable",
+            },
+        )
 
 @app.get("/wards")
 def list_wards():
